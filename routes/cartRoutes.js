@@ -3,6 +3,9 @@ var router = express.Router()
 
 const User = require("../models/users") // Require le modèle users
 
+
+
+
 const { checkBody } = require("../modules/checkBody") // Require un module (if needed)
 
 router.post("/new", (req, res) => {
