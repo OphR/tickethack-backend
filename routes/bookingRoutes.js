@@ -1,112 +1,108 @@
 var express = require("express")
 var router = express.Router()
 
-const User = require("../models/users") // Require le modèle users
-
-const { checkBody } = require("../modules/checkBody") // Require un module (if needed)
+const Booking = require("../models/bookings")
 
 router.post("/new", (req, res) => {
-  const { firstname, lastname, email, password } = req.body // Désctructuration
 
-  const newUser = new User({
-      firstname,
-      lastname,
-      email,
-      password,
-      likes: [],
-      applicationStatus: { // Respect du schéma
-          validated: false,
-          rejected: false,
-          pending: true,
-      },
-  })
+  const { departure, arrival, date, price } = req.body 
 
-  newUser.save().then(() => res.json({ result: true }))
+  const newBooking = new Booking({
+        departure: String,
+        arrival: String,
+        date: Date,
+        price: Number,
+    })
+      
+
+  newBooking.save().then(() => res.json({ result: true }))
 })
 
 router.get("/all", (req, res) => {
-  User.find().then((allUsers) => res.json({ result: true, allUsers }))
+    Booking.find().then((allBooking) => res.json({ result: true, allBooking }))
 })
 
 router.put("/update", (req, res) => {
-  const { email, firstname } = req.body
+  const { departure, arrival } = req.body
 
-  User.findOne({ email }).then((userFound) => {
-      if (!userFound) {
-          return res.json({ result: false, error: "User not found" })
+  Booking.findOne({ departure }).then((bookingFound) => {
+      if (!bookingFound) {
+          return res.json({ result: false, error: "Booking not found" })
       } else {
-          User.updateOne({ email }, { firstname: firstname }).then((userUpdated) => {
-              return res.json({ result: true, updatedUser })
+          Booking.updateOne({ departure }, { departure: departure }).then((bookingUpdated) => {
+              return res.json({ result: true, updatedBooking })
           })
       }
   })
 })
 
 router.delete("/delete", (req, res) => {
-  const { email } = req.body
+  const { departure } = req.body
 
-  User.findOne({ email }).then((userFound) => {
-      if (!userFound) {
-          return res.json({ result: false, error: "User not found" })
+  Booking.findOne({ departure }).then((bookingFound) => {
+      if (!bookingFound) {
+          return res.json({ result: false, error: "Booking not found" })
       } else {
-          User.deleteOne({ email }).then((userDeleted) => {
-              return res.json({ result: true, deletedUser })
+          Booking.deleteOne({ departure }).then((bookingDeleted) => {
+              return res.json({ result: true, deletedBooking })
           })
       }
   })
 })
 
-fetch("<http://localhost:3000/users/all>")
+fetch("<http://localhost:3000/bookings/all>")
     .then((response) => response.json()) // Converts the response to JSON
-    .then((users) => console.log("All users: ", users)
+    .then((bookings) => console.log("All bookings: ", departure)
 
-    fetch("<http://localhost:3000/users/new>", {
+    fetch("<http://localhost:3000/bookings/new>", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-          firstname: "Joachim",
-          lastname: "Jasmin",
-          email: "joachim.jasmin@gmail.com",
-          password: "AVeryStrongPassword!!!",
+          departure: "Marseille",
+          arrival: "Bruxelles",
+          date: `{2024-01-31T07:26:17.287+00:00}`,
+          price: 85,
       }),
   })
       .then((response) => response.json())
       .then((data) => {
           if (data.result === true) {
-              console.log("Youpi !")
+              console.log("Booking find !")
           } else {
-              console.log("Moins youpi...")
+              console.log("Booking not find !")
           }
       })
 
-      fetch("<http://localhost:3000/users/update>", {
+      fetch("<http://localhost:3000/bookings/update>", {
         method: "PUT",
         body: JSON.stringify({
-            firstname: "Joachim Alexandre",
-            email: "joachim.jasmin@gmail.com",
+            departure: "Marseille",
+            arrival: "Bruxelles",
+            date: `{2024-01-31T07:26:17.287+00:00}`,
+            price: 85,
         }),
     })
         .then((response) => response.json())
         .then((data) => {
             if (data.result === true) {
-                console.log("User Updated: ", data.updatedUser)
+                console.log("Booking Updated: ", data.updatedBooking)
             } else {
-                console.log("Moins youpi...")
+                console.log("Booking not put !")
             }
         }))
 
-        fetch("<http://localhost:3000/users/delete>", {
+        fetch("<http://localhost:3000/bookings/delete>", {
           method: "DELETE",
           body: JSON.stringify({
-              email: "joachim.jasmin@gmail.com",
+            departure: "Marseille",
           }),
       })
           .then((response) => response.json())
           .then((data) => {
               if (data.result === true) {
-                  console.log("User Deleted: ", data.deletedUser)
+                  console.log("Booking Deleted: ", data.deletedBooking)
               } else {
-                  console.log("Moins youpi...")
+                  console.log("Booking not deleted.")
               }
           })
 

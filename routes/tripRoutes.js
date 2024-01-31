@@ -1,27 +1,32 @@
 var express = require("express")
 var router = express.Router()
+const moment = require('moment');
 
-const User = require("../models/users") // Require le modèle users
+const Trip = require("../models/trips") 
 
-const { checkBody } = require("../modules/checkBody") // Require un module (if needed)
-
-/*GET route*/
 router.get('/trips/:departure/:arrival/:date',(req, res)=> {
     Trip.find({
         departure: {$regex: new RegExp(req.params.departure, "i")},
         arrival: {$regex: new RegExp(req.params.arrival, "i")},
-        date: req.params.date
+        date: req.params.date.moment().startOf('day'),
     }).then(data => {
         if(!data === null) {
             res.json({allTrips: data})
         } else {
             res.json({message: 'No trip found.'})
-//Essayer d'y intégrer l'image "NotFound".
         }
     });
 });
-
-router.post('', (req, res) => {
+/* //Quand bouton book =>
+router.post('/cart/:arrival/:departure/:boolean...', (req, res) => {
+    fetch(//truc d'avant)
+    {
+        departure,
+        arrival,
+        boolean,
+        ...
+    }
+    cart.save()
     Trip.find({
 
 
@@ -29,7 +34,7 @@ router.post('', (req, res) => {
 
 
     })
-}
+} */
 
 
 

@@ -21,8 +21,8 @@ function randomNumber(min, max) {
 const trips = [];
 for (let i = 0; i < NB_TRIPS; i++) {
   const [departure, arrival] = randomElement(CITIES, 2);
-  const date = momentRandom(moment().add(2, 'weeks'), moment());
-  trips.push({ departure, arrival, date: { $date: date.toDate() }, price: randomNumber(MIN_PRICE, MAX_PRICE) });
+  const date = moment().startOf('day');
+  trips.push({ departure, arrival, date: { $date: date.moment().startOf('day') }, price: randomNumber(MIN_PRICE, MAX_PRICE) });
 }
 
 const sortedTrips = trips.sort((a, b) => a.date.$date - b.date.$date);

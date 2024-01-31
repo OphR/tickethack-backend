@@ -1,34 +1,34 @@
 var express = require("express")
 var router = express.Router()
 
-const User = require("../models/users") // Require le modèle users
+
+const Cart = require("../models/carts") 
 
 
+router.post("/new/:arrival/:departure/:date", (req, res) => {
+    fetch(`http://localhost:3000/get/${req.params.arrival}/${req.params.departure}/${date}`)
+    if(!departure == null && !arrival == null && !date == null){
+        const { departure, arrival } = req.body 
 
-
-const { checkBody } = require("../modules/checkBody") // Require un module (if needed)
-
-router.post("/new", (req, res) => {
-  const { firstname, lastname, email, password } = req.body // Désctructuration
-
-  const newUser = new User({
-      firstname,
-      lastname,
-      email,
-      password,
-      likes: [],
-      applicationStatus: { // Respect du schéma
-          validated: false,
-          rejected: false,
-          pending: true,
-      },
-  })
-
-  newUser.save().then(() => res.json({ result: true }))
+        const newCart = new Cart({
+            departure,
+            arrival,
+        })
+      
+        newCart.save().then(() => res.json({ result: true }))
+      } else {
+        res.json({`Trip not found`})
+      }}
+      )
+    
+router.get("/trip/:arrival/:departure/:date", (req, res) => {
+    Trip.findOne({arrival: req.params.arrival, departure: req.params.departure, date: req.params.date})
 })
+    
+
 
 router.get("/all", (req, res) => {
-  User.find().then((allUsers) => res.json({ result: true, allUsers }))
+  Cart.find().then((allCarts) => res.json({ result: true, allCarts }))
 })
 
 router.put("/update", (req, res) => {
@@ -59,57 +59,62 @@ router.delete("/delete", (req, res) => {
   })
 })
 
-fetch("<http://localhost:3000/users/all>")
-    .then((response) => response.json()) // Converts the response to JSON
-    .then((users) => console.log("All users: ", users)
 
-    fetch("<http://localhost:3000/users/new>", {
+
+let departure =  req.params.departure;
+let arrival = req.params.arrival;
+
+fetch("<http://localhost:3000/carts/>")
+    .then((response) => response.json()) 
+    .then((trips) => console.log("All trips: ", trips)
+    fetch("<http://localhost:3000/carts/new>", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-          firstname: "Joachim",
-          lastname: "Jasmin",
-          email: "joachim.jasmin@gmail.com",
-          password: "AVeryStrongPassword!!!",
+         departure:  req.params.departure,
+         arrival: req.params.arrival,
       }),
   })
       .then((response) => response.json())
       .then((data) => {
           if (data.result === true) {
-              console.log("Youpi !")
+              console.log("Your trip is in the cart !")
           } else {
-              console.log("Moins youpi...")
+              console.log("Your trip is not found.")
           }
       })
 
-      fetch("<http://localhost:3000/users/update>", {
+
+
+
+      fetch("<http://localhost:3000/carts/update>", {
         method: "PUT",
         body: JSON.stringify({
-            firstname: "Joachim Alexandre",
-            email: "joachim.jasmin@gmail.com",
+            departure:  req.params.departure,
+            arrival: req.params.arrival,
         }),
     })
         .then((response) => response.json())
         .then((data) => {
             if (data.result === true) {
-                console.log("User Updated: ", data.updatedUser)
+                console.log("Cart Updated: ", data.updatedCart)
             } else {
-                console.log("Moins youpi...")
+                console.log("Cart not updated.")
             }
         }))
 
-        fetch("<http://localhost:3000/users/delete>", {
+        fetch("<http://localhost:3000/carts/delete>", {
           method: "DELETE",
           body: JSON.stringify({
-              email: "joachim.jasmin@gmail.com",
+            departure:  req.params.departure,
           }),
       })
           .then((response) => response.json())
           .then((data) => {
               if (data.result === true) {
-                  console.log("User Deleted: ", data.deletedUser)
+                  console.log("Cart Deleted: ", data.deletedCart)
               } else {
-                  console.log("Moins youpi...")
+                  console.log("Pas de suppression.")
               }
           })
 
